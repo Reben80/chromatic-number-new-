@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Coloring Game</title>
+    <link rel="stylesheet" href="graph-coloring.css">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <div id="game-container">
+        <div id="mode-buttons-container"></div>
+        
+        <div id="main-content">
+            <div id="controls">
+                <div class="control-group">
+                    <label for="numVertices">Number of vertices:</label>
+                    <input type="number" id="numVertices" min="5" max="15" value="5">
+                    <button id="resetButton">Reset</button>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" width="800" height="500">
+                <div id="colorCounter">Colors used: <span id="colorCount">0</span></div>
+            </canvas>
+            <div id="colorPalette"></div>
+        </div>
+    </div>
+    <script src="graph-coloring.js"></script>
+</body>
+</html> 
