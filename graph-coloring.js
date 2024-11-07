@@ -19,7 +19,16 @@ let currentMode = 'random';
 let sketchState = 'vertices'; // 'vertices' or 'edges'
 let selectedVertex = null;
 
-const colors = ['#FFA726', '#66BB6A', '#42A5F5', '#AB47BC', '#EC407A', '#8D6E63'];
+const colors = [
+    '#f44336',  // Red
+    '#2196F3',  // Light Blue
+    '#4CAF50',  // Green
+    '#FFEB3B',  // Bright Yellow
+    '#1a237e',  // Dark Blue
+    '#9C27B0',  // Purple
+    '#FF9800',  // Orange
+    '#795548'   // Brown
+];
 
 const challenges = [
     // Challenge 1:Triangle-Based Graph 
@@ -1026,18 +1035,7 @@ function createModeButtons() {
     });
 }
 
-// Add icons to sketch buttons
-function createSketchButtons() {
-    const buttons = [
-        { text: 'Vertices', icon: '⚪' },
-        { text: 'Edges', icon: '↔️' },
-        { text: 'Delete', icon: '🗑️' },
-        { text: 'Play', icon: '▶️' },
-        { text: 'Reset', icon: '🔄' }
-    ];
-    
-    // ... button creation code
-}
+
 
 // Enhance color palette with color picker
 function setupColorPalette() {
@@ -1232,7 +1230,8 @@ function createColorPalette() {
         '#FFC107',  // yellow
         '#1a237e',  // dark blue
         '#9C27B0',  // purple
-        '#FF9800'   // orange
+        '#FF9800',  // orange
+        '#795548'   // brown
     ];
     
     const palette = document.getElementById('colorPalette');
@@ -1265,4 +1264,53 @@ function createColorPalette() {
     if (palette.firstChild) {
         palette.firstChild.click();
     }
+}
+
+// Add How to Play button
+function addHowToPlayButton() {
+    const howToPlayBtn = document.createElement('button');
+    howToPlayBtn.className = 'how-to-play-btn';
+    howToPlayBtn.innerHTML = '❓ How to Play';
+    
+    howToPlayBtn.addEventListener('click', showHowToPlay);
+    
+    // Add it to your header or controls area
+    const container = document.getElementById('controls'); // or wherever you want to place it
+    container.appendChild(howToPlayBtn);
+}
+
+// Show How to Play modal
+function showHowToPlay() {
+    const modal = document.createElement('div');
+    modal.className = 'how-to-play-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>🎮 How to Play</h2>
+            <div class="instructions">
+                <p><strong>Sketch Mode:</strong></p>
+                <ul>
+                    <li>🟢 <strong>Vertices:</strong> Click to add points</li>
+                    <li>↔️ <strong>Edges:</strong> Connect two points</li>
+                    <li>🗑️ <strong>Delete:</strong> Remove points or connections</li>
+                    <li>▶️ <strong>Play:</strong> Start coloring your graph</li>
+                </ul>
+                <p><strong>Coloring Mode:</strong></p>
+                <ul>
+                    <li>Click a vertex to select it</li>
+                    <li>Choose a color from the palette</li>
+                    <li>Connected vertices can't share the same color!</li>
+                </ul>
+            </div>
+            <button class="close-modal">Got it!</button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking close button or outside
+    const closeBtn = modal.querySelector('.close-modal');
+    closeBtn.onclick = () => modal.remove();
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.remove();
+    };
 }
