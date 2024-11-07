@@ -1314,3 +1314,4 @@ function showHowToPlay() {
         if (e.target === modal) modal.remove();
     };
 }
+// just otp mak
