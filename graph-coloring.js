@@ -123,7 +123,8 @@ const challenges = [
 const modes = [
     { value: 'random', text: 'Random', icon: '🎲' },
     { value: 'challenge', text: 'Challenge', icon: '🎯' },
-    { value: 'sketch', text: 'Sketch', icon: '✏️' }
+    { value: 'sketch', text: 'Sketch', icon: '✏️' },
+    { value: 'help', text: 'How to Play', icon: '❓' }
 ];
 
 const modeButtonsContainer = document.getElementById('mode-buttons-container');
@@ -136,12 +137,18 @@ modes.forEach(mode => {
         <span class="mode-icon">${mode.icon}</span>
         <span>${mode.text}</span>
     `;
-    button.addEventListener('click', () => {
-        document.querySelectorAll('.mode-button').forEach(btn => 
-            btn.classList.remove('active'));
-        button.classList.add('active');
-        updateControlsVisibility(mode.value);
-    });
+    
+    if (mode.value === 'help') {
+        button.addEventListener('click', showHowToPlay);
+    } else {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.mode-button').forEach(btn => 
+                btn.classList.remove('active'));
+            button.classList.add('active');
+            updateControlsVisibility(mode.value);
+        });
+    }
+    
     modeButtonsContainer.appendChild(button);
 });
 
@@ -869,6 +876,34 @@ function showSketchControls() {
     const verticesBtn = document.createElement('button');
     verticesBtn.className = 'challenge-button';
     verticesBtn.innerHTML = 'Vertices';
+    
+    // Edges button
+    const edgesBtn = document.createElement('button');
+    edgesBtn.className = 'challenge-button';
+    edgesBtn.innerHTML = 'Edges';
+    
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'challenge-button';
+    deleteBtn.innerHTML = 'Delete';
+    
+    // Play button
+    const playBtn = document.createElement('button');
+    playBtn.className = 'challenge-button';
+    playBtn.innerHTML = 'Play';
+    
+    // Add new Save button
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'challenge-button';
+    saveBtn.innerHTML = 'Save 💾';
+    saveBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'graph.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+    
+    // Keep existing event listeners
     verticesBtn.addEventListener('click', () => {
         document.querySelectorAll('.challenge-button').forEach(btn => 
             btn.classList.remove('active'));
@@ -877,10 +912,6 @@ function showSketchControls() {
         sketchState = 'vertices';
     });
     
-    // Edges button
-    const edgesBtn = document.createElement('button');
-    edgesBtn.className = 'challenge-button';
-    edgesBtn.innerHTML = 'Edges';
     edgesBtn.addEventListener('click', () => {
         document.querySelectorAll('.challenge-button').forEach(btn => 
             btn.classList.remove('active'));
@@ -888,11 +919,7 @@ function showSketchControls() {
         selectedVertex = null;
         sketchState = 'edges';
     });
-
-    // Delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'challenge-button';
-    deleteBtn.innerHTML = 'Delete';
+    
     deleteBtn.addEventListener('click', () => {
         document.querySelectorAll('.challenge-button').forEach(btn => 
             btn.classList.remove('active'));
@@ -901,10 +928,6 @@ function showSketchControls() {
         sketchState = 'delete';
     });
     
-    // Play button
-    const playBtn = document.createElement('button');
-    playBtn.className = 'challenge-button';
-    playBtn.innerHTML = 'Play';
     playBtn.addEventListener('click', () => {
         document.querySelectorAll('.challenge-button').forEach(btn => 
             btn.classList.remove('active'));
@@ -917,6 +940,8 @@ function showSketchControls() {
     buttonRow.appendChild(edgesBtn);
     buttonRow.appendChild(deleteBtn);
     buttonRow.appendChild(playBtn);
+    buttonRow.appendChild(saveBtn);  // Add save button to row
+    
     rowsContainer.appendChild(buttonRow);
     container.appendChild(rowsContainer);
     
@@ -960,32 +985,130 @@ function showGameMessage(message, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `game-message ${type}`;
     
-    // Removed countdown display, keep simple message
-    messageDiv.innerHTML = `<p>${message}</p>`;
-    
-    // Remove any existing message and timer
-    const existingMessage = document.querySelector('.game-message');
-    if (existingMessage) {
-        existingMessage.remove();
-        if (window.messageTimer) {
-            clearTimeout(window.messageTimer);
-        }
-        if (window.countdownInterval) {
-            clearInterval(window.countdownInterval);
-        }
+    // Special styling for EXTRAORDINARY message
+    if (message.includes("EXTRAORDINARY")) {
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <span class="message-text">✨ EXTRAORDINARY! You Beat The Greedy Algorithm! ✨</span>
+            </div>
+        `;
+        
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 400px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: popAndGlow 0.5s ease, shimmer 2s infinite;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+            text-align: center;
+            justify-content: center;
+            letter-spacing: 2px;
+            border: 2px solid rgba(255,255,255,0.3);
+        `;
+        
+        // Add special animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes popAndGlow {
+                0% { 
+                    transform: translate(-50%, -20px) scale(0.8);
+                    opacity: 0;
+                }
+                50% {
+                    transform: translate(-50%, 0) scale(1.1);
+                }
+                100% { 
+                    transform: translate(-50%, 0) scale(1);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes shimmer {
+                0% { background-position: 100% 0; }
+                100% { background-position: -100% 0; }
+            }
+            
+            .message-text {
+                animation: pulse 1.5s infinite;
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    } else {
+        // Define styles for different message types
+        const styles = {
+            error: {
+                icon: '⚠️',
+                background: '#ff5252',
+                shadow: 'rgba(255, 82, 82, 0.2)'
+            },
+            success: {
+                icon: '🎉',
+                background: '#4caf50',
+                shadow: 'rgba(76, 175, 80, 0.2)'
+            },
+            perfect: {
+                icon: '🌟',
+                background: '#2196F3',
+                shadow: 'rgba(33, 150, 243, 0.2)'
+            },
+            info: {
+                icon: 'ℹ️',
+                background: '#607d8b',
+                shadow: 'rgba(96, 125, 139, 0.2)'
+            }
+        };
+        
+        const style = styles[type] || styles.info;
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <span class="message-icon">${style.icon}</span>
+                <span class="message-text">${message}</span>
+            </div>
+        `;
+        
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 400px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${style.background};
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px ${style.shadow};
+            z-index: 1000;
+            animation: popIn 0.3s ease, fadeOut 0.5s ease 2s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+            text-align: center;
+            justify-content: center;
+        `;
     }
     
     document.body.appendChild(messageDiv);
-    
-    // Keep the 5-second display and 1-second fade
-    window.messageTimer = setTimeout(() => {
-        messageDiv.classList.add('fade-out');
-        setTimeout(() => {
-            if (messageDiv.parentElement) {
-                messageDiv.remove();
-            }
-        }, 1000);
-    }, 5000);
+    setTimeout(() => messageDiv.remove(), 2500);
 }
 
 // Add these functions to save/load progress
@@ -1286,32 +1409,95 @@ function showHowToPlay() {
     modal.innerHTML = `
         <div class="modal-content">
             <h2>🎮 How to Play</h2>
+            
             <div class="instructions">
-                <p><strong>Sketch Mode:</strong></p>
+                <h3>🎯 Objective</h3>
+                <p>Find the chromatic number of the graph - the minimum number of colors needed to color all vertices so that no adjacent vertices share the same color.</p>
+                
+                <h3>🧮 About Chromatic Numbers</h3>
                 <ul>
-                    <li>🟢 <strong>Vertices:</strong> Click to add points</li>
-                    <li>↔️ <strong>Edges:</strong> Connect two points</li>
-                    <li>🗑️ <strong>Delete:</strong> Remove points or connections</li>
-                    <li>▶️ <strong>Play:</strong> Start coloring your graph</li>
+                    <li>Every graph has a chromatic number (χ)</li>
+                    <li>The challenge is finding the smallest possible number of colors</li>
+                    <li>The computer uses a greedy algorithm which might not always find the optimal solution</li>
+                    <li>You might be able to find a better solution than the computer!</li>
                 </ul>
-                <p><strong>Coloring Mode:</strong></p>
+
+                <h3>📝 Basic Rules</h3>
                 <ul>
-                    <li>Click a vertex to select it</li>
-                    <li>Choose a color from the palette</li>
-                    <li>Connected vertices can't share the same color!</li>
+                    <li>🎨 Select a color from the palette below the graph</li>
+                    <li>🔵 Click on a vertex to color it</li>
+                    <li>⚠️ Adjacent vertices cannot have the same color</li>
+                    <li>🎯 Try to color the entire graph using as few colors as possible</li>
+                    <li>🔄 Use the "Reset" button to start over</li>
+                </ul>
+
+                <h3>🌟 Game Modes</h3>
+                <ul>
+                    <li>🎲 <strong>Random Mode:</strong> Generate and solve random graphs</li>
+                    <li>🎯 <strong>Challenge Mode:</strong> Try predefined graph puzzles</li>
+                    <li>✏️ <strong>Sketch Mode:</strong> Create and solve your own graphs</li>
                 </ul>
             </div>
             <button class="close-modal">Got it!</button>
         </div>
     `;
     
+    // Add modal styles
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+
+    // Add content styles
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 500px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    `;
+
+    // Style the close button
+    const closeBtn = modal.querySelector('.close-modal');
+    closeBtn.style.cssText = `
+        padding: 8px 20px;
+        background: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    `;
+
+    // Add hover effect to close button
+    closeBtn.onmouseover = () => closeBtn.style.background = '#1976D2';
+    closeBtn.onmouseout = () => closeBtn.style.background = '#2196F3';
+    
     document.body.appendChild(modal);
     
     // Close modal when clicking close button or outside
-    const closeBtn = modal.querySelector('.close-modal');
     closeBtn.onclick = () => modal.remove();
     modal.onclick = (e) => {
         if (e.target === modal) modal.remove();
     };
+
+    // Add specific style for the note section
+    const noteSection = modal.querySelector('.note-section');
+    noteSection.style.cssText = `
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-left: 4px solid #2196F3;
+        border-radius: 4px;
+    `;
 }
-// just otp mak
