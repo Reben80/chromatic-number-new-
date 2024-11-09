@@ -483,3 +483,25 @@ body {
     min-width: 30px;
     color: #2E7D32; /* Same green as active buttons */
 }
+
+.about-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.about-content {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.author {
+    font-weight: 600;
+    color: #2196F3;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.author:hover {
+    color: #1976D2;
+    text-decoration: underline;
+}
