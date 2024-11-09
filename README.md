@@ -35,3 +35,7 @@ An interactive web-based game to learn and practice graph coloring algorithms. T
 - HTML5 Canvas
 - Vanilla JavaScript
 - CSS3
+## Acknowledgments
+
+Special thanks to:
+- [@A1-3x](https://github.com/A1-3x) for providing insightful feedback and suggestions that helped improve this project.
